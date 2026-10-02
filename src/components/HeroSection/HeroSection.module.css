@@ -1,0 +1,19 @@
+.heroSection {
+  background: linear-gradient(135deg, var(--accent-color), #1e40af);
+  color: #ffffff;
+  padding: 60px 32px;
+  border-radius: var(--radius);
+  margin-top: 24px;
+  text-align: center;
+}
+
+.heroSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.heroSection p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 24px;
+}
