@@ -3,36 +3,38 @@ import { Logo } from "../Logo/Logo";
 import { Navigation } from '../Navigation/Navigation';
 import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
+// Импортируем стили как объект styles (обязательно для .module.css)
+import styles from './Header.module.css'; 
 
 export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelectTab, user, favoritesCount }) => {
-  return (
-    <header className="header">
-      <div className="header-container">
-        <Logo 
-          src="https://cdn-icons-png.flaticon.com/512/744/741407.png" 
-          altText="DriveSelect Logo" 
-          width={45} 
-        />
-        <h2 className="brand-name">DriveSelect</h2>
+    return (
+        <header className={styles.header}>
+            <div className={styles['header-container']}>
+                <Logo 
+                    src="https://flaticon.com"
+                    altText="DriveSelect Logo"
+                    width={200}
+                />
+                
+                {/* Новый контейнер для меню и кнопок справа */}
+                <div className={styles['header-right-side']}>
+                    <Navigation navItems={navItems} activeTab={activeTab} onSelectTab={onSelectTab} />
+                    
+                    <div className={styles['header-actions']}>
+                        <div className={styles['favorites-indicator']} title="Favorite Cars">
+                           ❤️ <span className={styles['fav-badge']}>{favoritesCount}</span>
+                        </div>
 
-        <Navigation navItems={navItems} activeTab={activeTab} onSelectTab={onSelectTab} />
+                        <Button 
+                            text={isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+                            variant="outline"
+                            onClick={() => setIsDarkMode(!isDarkMode)}
+                        />
 
-        <div className="header-actions">
-          <div className="favorites-indicator" title="Favorite Cars">
-            ❤️ <span className="fav-badge">{favoritesCount}</span>
-          </div>
-
-          <Button 
-            text={isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"} 
-            variant="outline" 
-            onClick={() => setIsDarkMode(!isDarkMode)} 
-          />
-
-          <UserProfile user={user} />
-        </div>
-
-        
-      </div>
-    </header>
-  );
+                        <UserProfile user={user} />
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
 };

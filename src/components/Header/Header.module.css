@@ -11,8 +11,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
-  padding: 0 16px;
+  height: auto;
+  padding: 10px 16px;
 }
 
 .headerRight {
@@ -45,4 +45,27 @@
 
 .themeToggle:hover {
   background: var(--bg-primary);
+}
+
+/* Выстраиваем логотип и всю правую часть в одну линию */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    height: auto;
+}
+
+/* Соединяем меню навигации и кнопки действий в один ряд */
+.header-right-side {
+    display: flex;
+    align-items: center;
+    gap: 40px; /* Отступ между кнопками меню и профилем */
+}
+
+/* Оставляем стили для самих кнопок действий */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
