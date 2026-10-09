@@ -1,11 +1,9 @@
 import React from 'react';
-// Импортируем картинку напрямую из папки assets
-import logoFile from '../../assets/logo.svg'; // Укажите правильное расширение (.png или .svg)!
+import logoFile from '../../assets/logo.svg'; 
 
-export const Logo = ({ altText, width = 250, height = 'auto' }) => {
+export const Logo = ({ altText, width = 250, height = 100 }) => {
     return (
         <div className="logo-container">
-            {/* Меняем {src} на наш импортированный logoFile */}
             <img src={logoFile} alt={altText} style={{ width, height }} />
         </div>
     );

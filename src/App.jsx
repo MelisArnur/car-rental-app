@@ -57,7 +57,6 @@ export default function App() {
     setModalState({ isOpen: false, car: null, days: 1 });
   };
 
-  // Фильтрация и сортировка
   let filteredCars = initialCars.filter((car) => {
     const matchesCategory = selectedCategory === 'All' || car.category === selectedCategory;
     const matchesSearch = car.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -105,7 +104,7 @@ export default function App() {
             subtitle="Find the perfect match for your next road trip or business event"
           />
 
-          {/* Вместо вызова отдельной разметки вызываем красивый родитеский CarsCatalog */}
+
           <CarsCatalog
             cars={displayedCars}
             categories={categoriesList}

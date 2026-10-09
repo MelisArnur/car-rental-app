@@ -3,7 +3,6 @@ import { Logo } from "../Logo/Logo";
 import { Navigation } from '../Navigation/Navigation';
 import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
-// Импортируем стили как объект styles (обязательно для .module.css)
 import styles from './Header.module.css'; 
 
 export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelectTab, user, favoritesCount }) => {
@@ -16,7 +15,6 @@ export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelec
                     width={200}
                 />
                 
-                {/* Новый контейнер для меню и кнопок справа */}
                 <div className={styles['header-right-side']}>
                     <Navigation navItems={navItems} activeTab={activeTab} onSelectTab={onSelectTab} />
                     

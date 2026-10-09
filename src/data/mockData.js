@@ -1,16 +1,19 @@
-// Импорт логотипа и аватарки пользователя
 import logoImg from '../assets/logo.svg';
 import userAvatarImg from '../assets/Avatar.jpg';
 
-// Импорты картинок автомобилей
 import teslaImg from '../assets/tesla.jpg';
 import bmwImg from '../assets/bmw.jpg';
 import mercedesImg from '../assets/mercedes.jpg';
+import mercedesGImg from '../assets/mercedesG.jpg';
 import porscheImg from '../assets/porsche.jpg';
+import porscheSImg from '../assets/porscheS.jpg';
 import audiImg from '../assets/Audi_RS6_Avant.jpg';
+import audi8Img from '../assets/audi_R8.jpg';
 import camryImg from '../assets/camry.jpg';
+import lexusImg from '../assets/lexus.jpg';
+import cybertruckImg from '../assets/cybertruck.jpg';
+import bmw5Img from '../assets/bmw5.jpg';
 
-// Импорты аватарок из отзывов
 import reviewUser1 from '../assets/User1.jpg';
 import reviewUser2 from '../assets/User2.jpg';
 
@@ -55,83 +58,83 @@ export const initialCars = [
     title: "Mercedes-Benz G-Class",
     category: "SUV",
     pricePerDay: 220,
-    isAvailable: false,
+    isAvailable: true,
     rating: 5.0,
     reviewsCount: 42,
     colors: ["Obsidian Black", "Matte Gray"],
     description: "Luxury off-road icon offering supreme comfort and prestige.",
-    imageUrl: mercedesImg,
+    imageUrl: mercedesGImg,
   },
   {
     id: 4,
-    title: "Porsche 911 Carrera",
+    title: "porsche 918 spyder",
     category: "Sports",
-    pricePerDay: 260,
+    pricePerDay: 500,
     isAvailable: true,
-    rating: 4.9,
-    reviewsCount: 15,
+    rating: 3.3,
+    reviewsCount: 3,
     colors: ["Guards Red", "GT Silver", "Black"],
     description: "Iconic sports car delivering precision handling and speed.",
-    imageUrl: porscheImg,
+    imageUrl: porscheSImg,
   },
   {
     id: 5,
-    title: "Audi RS6 Avant",
-    category: "Wagon",
-    pricePerDay: 180,
+    title: "Audi R8",
+    category: "Sports",
+    pricePerDay: 300,
     isAvailable: true,
     rating: 4.7,
     reviewsCount: 11,
     colors: ["Nardo Gray", "Mythos Black"],
-    description: "The ultimate blend of supercar performance and family practical design.",
-    imageUrl: audiImg,
+    description: "The ultimate blend of supercar performance.",
+    imageUrl: audi8Img,
   },
   {
     id: 6,
-    title: "Toyota Camry",
+    title: "Lexus ES 350",
     category: "Sedan",
-    pricePerDay: 50,
+    pricePerDay: 60,
     isAvailable: true,
-    rating: 4.6,
-    reviewsCount: 38,
+    rating: 4.4,
+    reviewsCount: 16,
     colors: ["Black", "White", "Silver"],
     description: "Reliable and comfortable sedan perfect for business and city trips.",
-    imageUrl: camryImg,
+    imageUrl: lexusImg,
   },
   {
     id: 7,
-    title: "Tesla Model 3",
+    title: "Tesla Cybertruck",
     category: "Electric",
-    pricePerDay: 85,
+    pricePerDay: 120,
     isAvailable: true,
-    rating: 4.9,
-    reviewsCount: 24,
+    rating: 4.5,
+    reviewsCount: 30,
     colors: ["White", "Black", "Deep Blue"],
-    description: "Modern electric sedan with autopilot and long driving range.",
-    imageUrl: teslaImg,
+    description: "Modern electric pickup with autopilot and long driving range.",
+    imageUrl: cybertruckImg,
   },
   {
     id: 8,
-    title: "BMW M4 Competition",
+    title: "BMW M5 Competition",
     category: "Sports",
     pricePerDay: 150,
     isAvailable: true,
-    rating: 4.8,
-    reviewsCount: 18,
+    rating: 4.9,
+    reviewsCount: 19,
     colors: ["Yellow", "Black", "Isle of Man Green"],
     description: "High-performance sports coupe built for dynamic driving.",
-    imageUrl: bmwImg,
+    imageUrl: bmw5Img,
   },
   {
     id: 9,
-    title: "Mercedes-Benz G-Class",
-    category: "SUV",
+    title: "Mercedes-Benz S-Class",
+    category: "Sedan",
     pricePerDay: 220,
     isAvailable: false,
     rating: 5.0,
     reviewsCount: 42,
     colors: ["Obsidian Black", "Matte Gray"],
-    description: "Luxury off-road icon offering supreme comfort and prestige.",
+    description: "Luxury icon offering supreme comfort and prestige.",
     imageUrl: mercedesImg,
   },
   {
