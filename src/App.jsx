@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header/Header';
 import { HeroSection } from './components/HeroSection/HeroSection';
 import { SectionHeader } from './components/SectionHeader/SectionHeader';
@@ -10,12 +10,12 @@ import { Container } from './components/Container/Container';
 import { Footer } from './components/Footer/Footer';
 import { ProgressBar } from './components/ProgressBar/ProgressBar';
 import { Toast } from './components/Toast/Toast';
+import { useFavorites } from './context/useContexts';
 
 import {
   initialCars,
   categoriesList,
   navItemsList,
-  currentUser,
   statsList,
   initialReviews,
 } from './data/mockData';
@@ -23,32 +23,13 @@ import {
 import './App.css';
 
 export default function App() {
-  const getInitialDarkMode = () => {
-    const savedTheme = localStorage.getItem('theme');
-
-    if (savedTheme === 'dark' || savedTheme === 'light') {
-      return savedTheme === 'dark';
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  };
-
-  const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode);
-  const [hasManualTheme, setHasManualTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark' || savedTheme === 'light';
-  });
+  const { toastMessage, clearToast } = useFavorites();
   const [activeTab, setActiveTab] = useState('cars');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('price-asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem('favorites');
-    return saved ? JSON.parse(saved) : [];
-  });
   const [modalState, setModalState] = useState({ isOpen: false, car: null, days: 1 });
-  const [toast, setToast] = useState(null);
   const [cars, setCars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -56,63 +37,36 @@ export default function App() {
 
   const loadCars = (signal) =>
     new Promise((resolve, reject) => {
+      const abortLoad = () => {
+        clearTimeout(timer);
+        reject(new DOMException('The operation was aborted.', 'AbortError'));
+      };
       const timer = setTimeout(() => {
-        if (signal.aborted) {
-          reject(new DOMException('The operation was aborted.', 'AbortError'));
-          return;
-        }
-
+        signal.removeEventListener('abort', abortLoad);
         resolve(initialCars);
       }, 400);
 
-      signal.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          reject(new DOMException('The operation was aborted.', 'AbortError'));
-        },
-        { once: true }
-      );
+      signal.addEventListener('abort', abortLoad, { once: true });
     });
 
-  // 1 & 13. Первичная загрузка + AbortController
+  // 1, 9 & 13. Первичная и повторная загрузка с отменой предыдущего запроса
   useEffect(() => {
     const controller = new AbortController();
-    setIsLoading(true);
 
     loadCars(controller.signal)
       .then((data) => {
         setCars(data);
         setIsLoading(false);
       })
-      .catch(() => {
-        setIsLoading(false);
-      });
-
-    return () => controller.abort();
-  }, []);
-
-  // 9. Загрузка данных при изменении фильтра/страницы + AbortController
-  useEffect(() => {
-    const controller = new AbortController();
-    setIsLoading(true);
-
-    loadCars(controller.signal)
-      .then((data) => {
-        setCars(data);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setIsLoading(false);
+          console.error('Failed to load cars:', error);
+        }
       });
 
     return () => controller.abort();
   }, [selectedCategory, currentPage, debouncedSearch]);
-
-  // 2. Сохранение избранного в localStorage
-  useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
 
   // 4. Динамический заголовок
   useEffect(() => {
@@ -143,66 +97,28 @@ export default function App() {
   }, [currentPage]);
 
 
-  // 15. Синхронизация темы с ОС, не затирая выбранную пользователем тему
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleSystemThemeChange = (event) => {
-      const savedTheme = localStorage.getItem('theme');
-
-      if (!savedTheme) {
-        setIsDarkMode(event.matches);
-      }
-    };
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleSystemThemeChange);
-      return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
-    }
-
-    mediaQuery.addListener(handleSystemThemeChange);
-    return () => mediaQuery.removeListener(handleSystemThemeChange);
-  }, []);
-
-  useEffect(() => {
-    if (hasManualTheme) {
-      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    }
-  }, [isDarkMode, hasManualTheme]);
-
-  // Синхронизация класса body с состоянием
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  }, [isDarkMode]);
-
-  const handleThemeToggle = () => {
-    setHasManualTheme(true);
-    setIsDarkMode((prev) => !prev);
-  };
-
-  const toggleFavorite = (carId) => {
-    setFavorites((prev) => {
-      const isRemoving = prev.includes(carId);
-      if (isRemoving) {
-        setToast('Removed from favorites');
-        return prev.filter((id) => id !== carId);
-      } else {
-        setToast('Added to favorites!');
-        return [...prev, carId];
-      }
-    });
-  };
-
   const handleOpenQuickView = (car, days) => {
     setModalState({ isOpen: true, car, days });
   };
 
   const handleCloseModal = () => {
     setModalState({ isOpen: false, car: null, days: 1 });
+  };
+
+  const handleSelectCategory = (category) => {
+    setIsLoading(true);
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query) => {
+    setIsLoading(true);
+    setSearchQuery(query);
+  };
+
+  const handlePageChange = (page) => {
+    setIsLoading(true);
+    setCurrentPage(page);
   };
 
   let filteredCars = cars.filter((car) => {
@@ -230,13 +146,9 @@ export default function App() {
     <div className="app-root">
       <ProgressBar />
       <Header
-        isDarkMode={isDarkMode}
-        setIsDarkMode={handleThemeToggle}
         navItems={navItemsList}
         activeTab={activeTab}
         onSelectTab={setActiveTab}
-        user={currentUser}
-        favoritesCount={favorites.length}
       />
 
       <Container>
@@ -260,20 +172,15 @@ export default function App() {
               cars={displayedCars}
               categories={categoriesList}
               selectedCategory={selectedCategory}
-              onSelectCategory={(cat) => {
-                setSelectedCategory(cat);
-                setCurrentPage(1);
-              }}
+              onSelectCategory={handleSelectCategory}
               searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
+              setSearchQuery={handleSearchChange}
               sortBy={sortBy}
               setSortBy={setSortBy}
-              favorites={favorites}
-              onToggleFavorite={toggleFavorite}
               onOpenQuickView={handleOpenQuickView}
               currentPage={currentPage}
               totalPages={totalPages}
-              setCurrentPage={setCurrentPage}
+              setCurrentPage={handlePageChange}
             />
           )}
         </section>
@@ -312,7 +219,7 @@ export default function App() {
         initialDays={modalState.days}
       />
 
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+      {toastMessage && <Toast message={toastMessage} onClose={clearToast} />}
     </div>
   );
 }

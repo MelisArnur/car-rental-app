@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Badge } from '../Badge/Badge';
 import { RatingStars } from '../RatingStars/RatingStars';
 import { Button } from '../Button/Button';
+import { useFavorites } from '../../context/useContexts';
 import styles from './CarCard.module.css'; // 1. Импортируем стили модуля
 
-export const CarCard = ({ car, onOpenQuickView, onToggleFavorite, isFav }) => {
+export const CarCard = ({ car, onOpenQuickView }) => {
   const [days, setDays] = useState(1);
+  const { favorites, toggleFavorite } = useFavorites();
+  const isFav = favorites.includes(car.id);
 
   const incrementDays = (e) => {
     e.stopPropagation();
@@ -26,7 +29,7 @@ export const CarCard = ({ car, onOpenQuickView, onToggleFavorite, isFav }) => {
         />
         <button 
           className={`${styles.favBtn} ${isFav ? styles.active : ''}`}
-          onClick={() => onToggleFavorite(car.id)}
+          onClick={() => toggleFavorite(car.id)}
           title={isFav ? "Remove from favorites" : "Add to favorites"}
         >
           {isFav ? '❤️' : '🤍'}

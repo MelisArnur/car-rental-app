@@ -1,4 +1,3 @@
-import React from 'react';
 import { CategoryFilter } from '../CategoryFilter/CategoryFilter';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { SortDropdown } from '../SortDropdown/SortDropdown';
@@ -15,8 +14,6 @@ export const CarsCatalog = ({
   setSearchQuery,
   sortBy,
   setSortBy,
-  favorites,
-  onToggleFavorite,
   onOpenQuickView,
   currentPage,
   totalPages,
@@ -43,8 +40,6 @@ export const CarsCatalog = ({
             <CarCard
               key={car.id}
               car={car}
-              isFav={favorites.includes(car.id)}
-              onToggleFavorite={onToggleFavorite}
               onOpenQuickView={onOpenQuickView}
             />
           ))}

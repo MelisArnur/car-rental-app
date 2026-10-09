@@ -1,11 +1,15 @@
-import React from 'react';
 import { Logo } from "../Logo/Logo";
 import { Navigation } from '../Navigation/Navigation';
 import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
+import { useTheme, useAuth, useFavorites } from '../../context/useContexts';
 import styles from './Header.module.css'; 
 
-export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelectTab, user, favoritesCount }) => {
+export const Header = ({ navItems, activeTab, onSelectTab }) => {
+    const { isDarkMode, toggleTheme } = useTheme();
+    const { user, login, logout } = useAuth();
+    const { favorites } = useFavorites();
+
     return (
         <header className={styles.header}>
             <div className={styles['header-container']}>
@@ -20,16 +24,16 @@ export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelec
                     
                     <div className={styles['header-actions']}>
                         <div className={styles['favorites-indicator']} title="Favorite Cars">
-                           ❤️ <span className={styles['fav-badge']}>{favoritesCount}</span>
+                           ❤️ <span className={styles['fav-badge']}>{favorites.length}</span>
                         </div>
 
                         <Button 
                             text={isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
                             variant="outline"
-                            onClick={setIsDarkMode}
+                            onClick={toggleTheme}
                         />
 
-                        <UserProfile user={user} />
+                        <UserProfile user={user} onLogin={login} onLogout={logout} />
                     </div>
                 </div>
             </div>
