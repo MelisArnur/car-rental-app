@@ -65,7 +65,7 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
         </div>
 
                 <div className={styles.modalBody}>
-          <div style={{ backgroundColor: '#fff3cd', padding: '10px', marginBottom: '15px', borderRadius: '4px', textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#602929', padding: '10px', marginBottom: '15px', borderRadius: '4px', textAlign: 'center' }}>
             🔥 Special Offer! Discount expires in: <strong>{formatTime(timeLeft)}</strong>
           </div>
           <div className={styles.quickviewSummary}>
