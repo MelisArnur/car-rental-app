@@ -27,7 +27,86 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('price-asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem('favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [cars, setCars] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 1 & 13. Первичная загрузка + AbortController
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoading(true);
+
+    // Имитация загрузки с сервера
+    const timer = setTimeout(() => {
+      setCars(initialCars);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, []);
+
+  // 2. Сохранение избранного в localStorage
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  // 4. Динамический заголовок
+  useEffect(() => {
+    document.title = selectedCategory === 'All' 
+      ? 'DriveSelect — Premium Car Rental' 
+      : `${selectedCategory} Cars | DriveSelect`;
+  }, [selectedCategory]);
+
+  // 5. Debounce-поиск
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // 7. Resize listener
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 10. Scroll to top при смене страницы
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
+  // 15. Синхронизация темы с ОС
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    
+    // Устанавливаем при первом входе, если пользователь еще не менял тему вручную
+    if (localStorage.getItem('theme') === null) {
+      setIsDarkMode(mediaQuery.matches);
+    }
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // 9. Имитация загрузки при смене фильтров
+  useEffect(() => {
+    if (cars.length > 0) {
+      console.log(`Fetching data for category: ${selectedCategory}, page: ${currentPage}`);
+      // Здесь мог бы быть запрос к API
+    }
+  }, [selectedCategory, currentPage]);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -38,8 +117,10 @@ export default function App() {
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
 
@@ -57,9 +138,9 @@ export default function App() {
     setModalState({ isOpen: false, car: null, days: 1 });
   };
 
-  let filteredCars = initialCars.filter((car) => {
+  let filteredCars = cars.filter((car) => {
     const matchesCategory = selectedCategory === 'All' || car.category === selectedCategory;
-    const matchesSearch = car.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = car.title.toLowerCase().includes(debouncedSearch.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -100,30 +181,33 @@ export default function App() {
 
         <section id="cars" className="section-padding">
           <SectionHeader
-            title="Available Vehicles"
+            title={isMobile ? "Fleet" : "Available Vehicles"}
             subtitle="Find the perfect match for your next road trip or business event"
           />
 
-
-          <CarsCatalog
-            cars={displayedCars}
-            categories={categoriesList}
-            selectedCategory={selectedCategory}
-            onSelectCategory={(cat) => {
-              setSelectedCategory(cat);
-              setCurrentPage(1);
-            }}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            favorites={favorites}
-            onToggleFavorite={toggleFavorite}
-            onOpenQuickView={handleOpenQuickView}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-          />
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>Loading catalog...</div>
+          ) : (
+            <CarsCatalog
+              cars={displayedCars}
+              categories={categoriesList}
+              selectedCategory={selectedCategory}
+              onSelectCategory={(cat) => {
+                setSelectedCategory(cat);
+                setCurrentPage(1);
+              }}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              onOpenQuickView={handleOpenQuickView}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
         </section>
 
         <section id="stats" className="section-padding" style={{ marginTop: '40px' }}>
