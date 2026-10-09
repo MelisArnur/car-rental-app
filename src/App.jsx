@@ -8,6 +8,8 @@ import { TestimonialCard } from './components/TestimonialCard/TestimonialCard';
 import { QuickViewModal } from './components/QuickViewModal/QuickViewModal';
 import { Container } from './components/Container/Container';
 import { Footer } from './components/Footer/Footer';
+import { ProgressBar } from './components/ProgressBar/ProgressBar';
+import { Toast } from './components/Toast/Toast';
 
 import {
   initialCars,
@@ -21,7 +23,21 @@ import {
 import './App.css';
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const getInitialDarkMode = () => {
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      return savedTheme === 'dark';
+    }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+
+  const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode);
+  const [hasManualTheme, setHasManualTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark' || savedTheme === 'light';
+  });
   const [activeTab, setActiveTab] = useState('cars');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,27 +47,67 @@ export default function App() {
     const saved = localStorage.getItem('favorites');
     return saved ? JSON.parse(saved) : [];
   });
+  const [modalState, setModalState] = useState({ isOpen: false, car: null, days: 1 });
+  const [toast, setToast] = useState(null);
   const [cars, setCars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const loadCars = (signal) =>
+    new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        if (signal.aborted) {
+          reject(new DOMException('The operation was aborted.', 'AbortError'));
+          return;
+        }
+
+        resolve(initialCars);
+      }, 400);
+
+      signal.addEventListener(
+        'abort',
+        () => {
+          clearTimeout(timer);
+          reject(new DOMException('The operation was aborted.', 'AbortError'));
+        },
+        { once: true }
+      );
+    });
 
   // 1 & 13. Первичная загрузка + AbortController
   useEffect(() => {
     const controller = new AbortController();
     setIsLoading(true);
 
-    // Имитация загрузки с сервера
-    const timer = setTimeout(() => {
-      setCars(initialCars);
-      setIsLoading(false);
-    }, 1000);
+    loadCars(controller.signal)
+      .then((data) => {
+        setCars(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
 
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
+    return () => controller.abort();
   }, []);
+
+  // 9. Загрузка данных при изменении фильтра/страницы + AbortController
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoading(true);
+
+    loadCars(controller.signal)
+      .then((data) => {
+        setCars(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedCategory, currentPage, debouncedSearch]);
 
   // 2. Сохранение избранного в localStorage
   useEffect(() => {
@@ -86,48 +142,59 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
-  // 15. Синхронизация темы с ОС
+
+  // 15. Синхронизация темы с ОС, не затирая выбранную пользователем тему
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => setIsDarkMode(e.matches);
-    
-    // Устанавливаем при первом входе, если пользователь еще не менял тему вручную
-    if (localStorage.getItem('theme') === null) {
-      setIsDarkMode(mediaQuery.matches);
+
+    const handleSystemThemeChange = (event) => {
+      const savedTheme = localStorage.getItem('theme');
+
+      if (!savedTheme) {
+        setIsDarkMode(event.matches);
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+      return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
     }
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addListener(handleSystemThemeChange);
+    return () => mediaQuery.removeListener(handleSystemThemeChange);
   }, []);
 
-  // 9. Имитация загрузки при смене фильтров
   useEffect(() => {
-    if (cars.length > 0) {
-      console.log(`Fetching data for category: ${selectedCategory}, page: ${currentPage}`);
-      // Здесь мог бы быть запрос к API
+    if (hasManualTheme) {
+      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }
-  }, [selectedCategory, currentPage]);
+  }, [isDarkMode, hasManualTheme]);
 
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    car: null,
-    days: 1,
-  });
-
+  // Синхронизация класса body с состоянием
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
 
+  const handleThemeToggle = () => {
+    setHasManualTheme(true);
+    setIsDarkMode((prev) => !prev);
+  };
+
   const toggleFavorite = (carId) => {
-    setFavorites((prev) =>
-      prev.includes(carId) ? prev.filter((id) => id !== carId) : [...prev, carId]
-    );
+    setFavorites((prev) => {
+      const isRemoving = prev.includes(carId);
+      if (isRemoving) {
+        setToast('Removed from favorites');
+        return prev.filter((id) => id !== carId);
+      } else {
+        setToast('Added to favorites!');
+        return [...prev, carId];
+      }
+    });
   };
 
   const handleOpenQuickView = (car, days) => {
@@ -161,9 +228,10 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <ProgressBar />
       <Header
         isDarkMode={isDarkMode}
-        setIsDarkMode={setIsDarkMode}
+        setIsDarkMode={handleThemeToggle}
         navItems={navItemsList}
         activeTab={activeTab}
         onSelectTab={setActiveTab}
@@ -243,6 +311,8 @@ export default function App() {
         car={modalState.car}
         initialDays={modalState.days}
       />
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }

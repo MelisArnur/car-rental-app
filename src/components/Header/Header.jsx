@@ -26,7 +26,7 @@ export const Header = ({ isDarkMode, setIsDarkMode, navItems, activeTab, onSelec
                         <Button 
                             text={isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
                             variant="outline"
-                            onClick={() => setIsDarkMode(!isDarkMode)}
+                            onClick={setIsDarkMode}
                         />
 
                         <UserProfile user={user} />
