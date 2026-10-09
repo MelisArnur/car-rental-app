@@ -2,7 +2,7 @@ import styles from './UserProfile.module.css';
 
 export const UserProfile = ({ user, onLogin, onLogout }) => {
   if (!user) {
-    return <button className={styles.authAction} type="button" onClick={onLogin}>Sign in</button>;
+    return <button className={styles.authAction} type="button" onClick={() => onLogin()}>Sign in</button>;
   }
 
   return (

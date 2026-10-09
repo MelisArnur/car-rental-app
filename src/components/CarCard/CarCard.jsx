@@ -2,13 +2,17 @@ import { useState } from 'react';
 import { Badge } from '../Badge/Badge';
 import { RatingStars } from '../RatingStars/RatingStars';
 import { Button } from '../Button/Button';
-import { useFavorites } from '../../context/useContexts';
+import { useCart } from '../../context/useContexts';
 import styles from './CarCard.module.css'; // 1. Импортируем стили модуля
 
 export const CarCard = ({ car, onOpenQuickView }) => {
   const [days, setDays] = useState(1);
-  const { favorites, toggleFavorite } = useFavorites();
+  const { favorites, toggleFavorite, cartItems } = useCart();
   const isFav = favorites.includes(car.id);
+  const bookedDays = cartItems.reduce(
+    (total, item) => total + (item.id === car.id ? item.quantity : 0),
+    0
+  );
 
   const incrementDays = (e) => {
     e.stopPropagation();
@@ -59,11 +63,12 @@ export const CarCard = ({ car, onOpenQuickView }) => {
           <span className={styles.priceAmount}>${car.pricePerDay * days}</span>
           <small> (${car.pricePerDay}/day)</small>
         </div>
+        {bookedDays > 0 && <small>Already booked: {bookedDays} day(s)</small>}
       </div>
 
       <div className={styles.carCardFooter}>
         <Button 
-          text={car.isAvailable ? "Book Now" : "Currently Unavailable"} 
+          text={!car.isAvailable ? "Currently Unavailable" : bookedDays > 0 ? "Book More" : "Book Now"}
           variant="primary" 
           isDisabled={!car.isAvailable} 
           onClick={() => car.isAvailable && onOpenQuickView(car, days)} 

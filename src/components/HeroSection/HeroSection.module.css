@@ -1,5 +1,5 @@
 .heroSection {
-  background: linear-gradient(135deg, var(--accent-color), #1e40af);
+  background: linear-gradient(135deg, var(--accent-color), #14532d);
   color: #ffffff;
   padding: 60px 32px;
   border-radius: var(--radius);
@@ -8,6 +8,7 @@
 }
 
 .heroSection h1 {
+  color: #ffffff;
   font-size: 2.5rem;
   margin-bottom: 12px;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './ProgressBar.module.css';
 
 export const ProgressBar = () => {
@@ -7,7 +7,9 @@ export const ProgressBar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
+      const progress = totalHeight > 0
+        ? Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100))
+        : 0;
       setScroll(progress);
     };
 

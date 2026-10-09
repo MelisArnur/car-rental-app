@@ -28,7 +28,7 @@
 }
 
 .outline:hover:not(:disabled) {
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(21, 128, 61, 0.1);
   color: var(--accent-color);
 }
 

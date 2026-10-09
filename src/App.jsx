@@ -149,6 +149,7 @@ export default function App() {
         navItems={navItemsList}
         activeTab={activeTab}
         onSelectTab={setActiveTab}
+        isMobile={isMobile}
       />
 
       <Container>
@@ -216,7 +217,7 @@ export default function App() {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         car={modalState.car}
-        initialDays={modalState.days}
+        days={modalState.days}
       />
 
       {toastMessage && <Toast message={toastMessage} onClose={clearToast} />}

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Navigation.module.css';
 
 export const Navigation = ({ navItems, activeTab, onSelectTab }) => {
@@ -7,8 +6,19 @@ export const Navigation = ({ navItems, activeTab, onSelectTab }) => {
       {navItems.map((item) => (
         <button
           key={item.id}
+          type="button"
           className={`${styles.navLink} ${activeTab === item.id ? styles.active : ''}`}
-          onClick={() => onSelectTab(item.id)}
+          aria-current={activeTab === item.id ? 'location' : undefined}
+          onClick={() => {
+            onSelectTab(item.id);
+            const targetId = item.link?.replace(/^#/, '');
+            if (targetId) {
+              document.getElementById(targetId)?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              });
+            }
+          }}
         >
           {item.label}
         </button>

@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../Button/Button';
+import { useCart } from '../../context/useContexts';
 import styles from './QuickViewModal.module.css';
 
-export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
+export const QuickViewModal = ({ car, days = 1, onClose }) => {
   const [selectedColor, setSelectedColor] = useState(car?.colors?.[0] || '');
   const [promo, setPromo] = useState('');
   const [discount, setDiscount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(600); // 10 минут в секундах
+  const { addToCart } = useCart();
 
   // 6. Таймер обратного отсчета для акции
   useEffect(() => {
     if (!car) return;
-    
+
     const interval = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
@@ -21,15 +23,19 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
 
   // 11. Закрытие по Escape
   useEffect(() => {
+    if (!car) return;
+
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose();
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [car, onClose]);
 
   // 8. Click outside (уже реализован через overlay в JSX, но добавим для соответствия ДЗ)
   useEffect(() => {
+    if (!car) return;
+
     const handleClickOutside = (e) => {
       if (e.target.classList.contains(styles.modalOverlay)) {
         onClose();
@@ -37,7 +43,7 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [onClose]);
+  }, [car, onClose]);
 
   if (!car) return null;
 
@@ -57,7 +63,7 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
   const totalPrice = car.pricePerDay * days * (1 - discount);
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3>Book {car.title}</h3>
@@ -65,7 +71,7 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
         </div>
 
                 <div className={styles.modalBody}>
-          <div style={{ backgroundColor: '#602929', padding: '10px', marginBottom: '15px', borderRadius: '4px', textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#b91c1c', color: '#fff', padding: '10px', marginBottom: '15px', borderRadius: '4px', textAlign: 'center' }}>
             🔥 Special Offer! Discount expires in: <strong>{formatTime(timeLeft)}</strong>
           </div>
           <div className={styles.quickviewSummary}>
@@ -102,7 +108,19 @@ export const QuickViewModal = ({ car, days = 1, onClose, onConfirm }) => {
             Total: <strong>${totalPrice.toFixed(2)}</strong>
           </div>
 
-          <form className={styles.bookingForm} onSubmit={(e) => { e.preventDefault(); onConfirm(); }}>
+          <form
+            className={styles.bookingForm}
+            onSubmit={(e) => {
+              e.preventDefault();
+              addToCart({
+                ...car,
+                days,
+                bookingPricePerDay: car.pricePerDay * (1 - discount),
+                quantity: days,
+              });
+              onClose();
+            }}
+          >
             <input type="text" placeholder="Full Name" required />
             <input type="tel" placeholder="Phone Number" required />
             <Button text="Confirm Booking" variant="primary" />

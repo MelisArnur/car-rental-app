@@ -30,3 +30,5 @@ export function useFavorites() {
 
   return context;
 }
+
+export const useCart = useFavorites;

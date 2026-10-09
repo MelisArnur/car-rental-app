@@ -68,4 +68,70 @@
     display: flex;
     align-items: center;
     gap: 20px;
+  position: relative;
+}
+
+.bookingsAnchor {
+  position: relative;
+}
+
+.bookingsButton {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mobileMenuToggle {
+  display: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 20px;
+  line-height: 1;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .header-container {
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px 16px;
+  }
+
+  .header-right-side {
+    flex: 1 1 100%;
+  }
+
+  .mobileMenuPanel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  .mobileMenuPanel nav {
+    width: 100%;
+  }
+
+  .mobileMenuPanel .header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .header-actions {
+    flex: 1 1 100%;
+  }
+
+  .mobileMenuToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
