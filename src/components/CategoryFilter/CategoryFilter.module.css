@@ -5,15 +5,17 @@
 }
 
 .filterBtn {
-  padding: 8px 16px;
-  border-radius: 20px;
+  min-height: 38px;
+  padding: 7px 14px;
+  border-radius: 6px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-card);
   color: var(--text-secondary);
-  font-size: 14px;
+  font: inherit;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 
 .filterBtn:hover {
@@ -25,4 +27,10 @@
   background-color: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
+  font-weight: 600;
+}
+
+.filterBtn:focus-visible {
+  outline: 3px solid rgba(21, 128, 61, 0.25);
+  outline-offset: 2px;
 }

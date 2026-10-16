@@ -61,18 +61,68 @@
 .header-right-side {
     display: flex;
     align-items: center;
-    gap: 40px;
+  gap: 24px;
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
   position: relative;
 }
 
 .header-actions > button {
-  width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.header-actions button,
+.header-actions a.favorites-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+.header-actions button:hover:not(:disabled),
+.header-actions a.favorites-indicator:hover {
+  transform: none;
+  border-color: var(--accent-color);
+  background: var(--bg-primary);
+  color: var(--accent-color);
+}
+
+.favorites-indicator {
+  gap: 7px;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.favorites-indicator:hover {
+  background-color: var(--bg-primary);
+}
+
+.fav-badge {
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .bookingsAnchor {
@@ -80,25 +130,29 @@
 }
 
 .bookingsButton {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 8px 10px;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  white-space: nowrap;
-  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.bookingsButton:hover {
+  color: var(--accent-color);
 }
 
 .mobileMenuToggle {
   display: none;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text-primary);
   font-size: 20px;
   line-height: 1;
   padding: 8px 10px;
   cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.mobileMenuToggle:hover {
+  border-color: var(--accent-color);
+  background-color: var(--bg-primary);
 }
 
 @media (max-width: 767px) {

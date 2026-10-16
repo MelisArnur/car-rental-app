@@ -1,83 +1,124 @@
 import { useEffect, useState } from 'react';
-import { Outlet, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
-import { Header } from './components/Header/Header';
-import { Footer } from './components/Footer/Footer';
-import { ProgressBar } from './components/ProgressBar/ProgressBar';
-import { Toast } from './components/Toast/Toast';
-import { useFavorites } from './context/useContexts';
-import { BookingsPage } from './pages/BookingsPage';
-import { CarDetailsPage } from './pages/CarDetailsPage';
-import { CatalogPage } from './pages/CatalogPage';
-import { LoginPage } from './pages/LoginPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { ProtectedRoute } from './routes/ProtectedRoute';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { HeroSection } from './components/HeroSection/HeroSection';
+import { SectionHeader } from './components/SectionHeader/SectionHeader';
+import { CarCard } from './components/CarCard/CarCard';
+import { StatCard } from './components/StatCard/StatCard';
+import { TestimonialCard } from './components/TestimonialCard/TestimonialCard';
+import { QuickViewModal } from './components/QuickViewModal/QuickViewModal';
+import { Container } from './components/Container/Container';
+import { MainLayout } from './components/MainLayout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import {
+  AboutPage,
+  BookingConfirmedPage,
+  BookingsPage,
+  CarDetailsPage,
+  CatalogPage,
+  FavoritesPage,
+  LoginPage,
+  NotFoundPage,
+} from './pages/Pages';
+
+import {
+  initialCars,
+  statsList,
+  initialReviews,
+} from './data/mockData';
+
 import './App.css';
+import catalogStyles from './components/CarsCatalog/CarsCatalog.module.css';
 
-function RouteEffects() {
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get('page');
-
-  useEffect(() => {
-    if (location.hash) {
-      requestAnimationFrame(() => {
-        document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' });
-      });
-      return;
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location.pathname, location.hash, page]);
-
-  return null;
-}
-
-function AppLayout() {
-  const { toastMessage, clearToast } = useFavorites();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const location = useLocation();
-  const navItems = [
-    { id: 'fleet', label: 'Fleet', to: '/', end: true },
-    { id: 'stats', label: 'Analytics', to: '/#stats' },
-    { id: 'reviews', label: 'Reviews', to: '/#reviews' },
-    { id: 'bookings', label: 'Bookings', to: '/bookings' },
-  ];
+function HomePage() {
+  const navigate = useNavigate();
+  const [modalState, setModalState] = useState({ isOpen: false, car: null, days: 1 });
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    document.title = 'DriveSelect — Premium Car Rental';
   }, []);
 
-  useEffect(() => {
-    document.title = location.pathname.startsWith('/cars/')
-      ? 'Vehicle details | DriveSelect'
-      : location.pathname === '/bookings'
-        ? 'My bookings | DriveSelect'
-        : location.pathname === '/login'
-          ? 'Sign in | DriveSelect'
-          : location.pathname === '/'
-            ? 'DriveSelect — Premium Car Rental'
-            : 'Page not found | DriveSelect';
-  }, [location.pathname]);
+  const handleCloseModal = () => {
+    setModalState({ isOpen: false, car: null, days: 1 });
+  };
 
   return (
-    <div className="app-root">
-      <RouteEffects />
-      <ProgressBar />
-      <Header navItems={navItems} isMobile={isMobile} />
-      <main className="page-content">
-        <Outlet />
-      </main>
-      <Footer
-        copyrightText="© 2026 DriveSelect Inc. All rights reserved."
-        socialLinks={[
-          { platform: 'GitHub', url: 'https://github.com' },
-          { platform: 'Twitter', url: 'https://twitter.com' },
-        ]}
+    <main>
+      <Container>
+        <HeroSection
+          heading="Drive the Extraordinary"
+          subheading="Choose from luxury sports cars, comfortable electric sedans, and rugged SUVs."
+          buttonText="Explore Catalog"
+          onAction={() => navigate('/catalog')}
+        />
+
+        <section id="cars" className="section-padding">
+          <SectionHeader
+            title="Featured Vehicles"
+            subtitle="A few standouts from the DriveSelect fleet"
+          />
+          <div className={catalogStyles.carsGrid}>
+            {initialCars.slice(0, 3).map((car) => (
+              <CarCard
+                key={car.id}
+                car={car}
+                onOpenQuickView={(selectedCar, days) =>
+                  setModalState({ isOpen: true, car: selectedCar, days })
+                }
+              />
+            ))}
+          </div>
+          <div className="featured-catalog-link">
+            <Link to="/catalog">View All Vehicles →</Link>
+          </div>
+        </section>
+
+        <section id="stats" className="section-padding" style={{ marginTop: '40px' }}>
+          <SectionHeader title="Platform Analytics" subtitle="Live updates on our service performance" />
+          <div className="stats-grid">
+            {statsList.map((st) => (
+              <StatCard key={st.id} {...st} />
+            ))}
+          </div>
+        </section>
+
+        <section id="reviews" className="section-padding" style={{ marginTop: '40px' }}>
+          <SectionHeader title="Customer Testimonials" subtitle="Read what our clients say about us" />
+          <div className="reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+            {initialReviews.map((rev) => (
+              <TestimonialCard key={rev.id} {...rev} />
+            ))}
+          </div>
+        </section>
+      </Container>
+
+      <QuickViewModal
+        isOpen={modalState.isOpen}
+        onClose={handleCloseModal}
+        car={modalState.car}
+        days={modalState.days}
       />
-      {toastMessage && <Toast message={toastMessage} onClose={clearToast} />}
-    </div>
+
+    </main>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="catalog" element={<CatalogPage />} />
+        <Route path="cars/:id" element={<CarDetailsPage />} />
+        <Route path="favorites" element={<FavoritesPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="bookings" element={<BookingsPage />} />
+          <Route path="booking-confirmed" element={<BookingConfirmedPage />} />
+        </Route>
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }
 

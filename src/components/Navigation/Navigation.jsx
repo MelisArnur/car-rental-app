@@ -1,27 +1,24 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.css';
 
-export const Navigation = ({ navItems, onNavigate }) => {
+const navItems = [
+  { label: 'Home', to: '/', end: true },
+  { label: 'Fleet Catalog', to: '/catalog' },
+  { label: 'About', to: '/about' },
+];
+
+export const Navigation = ({ onNavigate }) => {
   return (
     <nav className={styles.nav}>
-      {navItems.map((item) => item.to.includes('#') ? (
-        <Link
-          key={item.id}
-          className={styles.navLink}
-          to={item.to}
-          onClick={onNavigate}
-        >
-          {item.label}
-        </Link>
-      ) : (
+      {navItems.map(({ label, to, end }) => (
         <NavLink
-          key={item.id}
-          end={item.end}
+          key={to}
+          to={to}
+          end={end}
           className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-          to={item.to}
           onClick={onNavigate}
         >
-          {item.label}
+          {label}
         </NavLink>
       ))}
     </nav>

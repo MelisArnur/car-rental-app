@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Badge } from '../Badge/Badge';
 import { RatingStars } from '../RatingStars/RatingStars';
 import { Button } from '../Button/Button';
@@ -45,7 +46,7 @@ export const CarCard = ({ car, onOpenQuickView }) => {
 
       <div className={styles.carCardBody}>
         <span className={styles.carCategory}>{car.category}</span>
-        <h3>{car.title}</h3>
+        <h3><Link to={`/cars/${car.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>{car.title}</Link></h3>
         <p className="car-desc">{car.description}</p>
         
         <RatingStars score={car.rating} reviewsCount={car.reviewsCount} />

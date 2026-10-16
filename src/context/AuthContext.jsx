@@ -14,7 +14,16 @@ function readSavedUser() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readSavedUser);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('authUser');
+      const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+      return parsedUser && typeof parsedUser.name === 'string' ? parsedUser : null;
+    } catch {
+      localStorage.removeItem('authUser');
+      return null;
+    }
+  });
 
   const login = useCallback((profile = currentUser) => {
     localStorage.setItem('authUser', JSON.stringify(profile));

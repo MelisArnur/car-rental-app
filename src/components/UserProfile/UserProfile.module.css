@@ -28,10 +28,25 @@
 }
 
 .authAction {
-  padding: 6px 10px;
-  border: 1px solid var(--border-color);
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--accent-color);
   border-radius: 6px;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--accent-color);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.authAction:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.authAction:focus-visible {
+  outline: 3px solid rgba(21, 128, 61, 0.28);
+  outline-offset: 2px;
 }
