@@ -47,28 +47,32 @@
   background: var(--bg-primary);
 }
 
-/* Выстраиваем логотип и всю правую часть в одну линию */
 .header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+    gap: 20px;
     padding: 10px 24px;
     height: auto;
 }
 
-/* Соединяем меню навигации и кнопки действий в один ряд */
 .header-right-side {
     display: flex;
     align-items: center;
-    gap: 40px; /* Отступ между кнопками меню и профилем */
+    gap: 40px;
 }
 
-/* Оставляем стили для самих кнопок действий */
 .header-actions {
     display: flex;
     align-items: center;
     gap: 20px;
   position: relative;
+}
+
+.header-actions > button {
+  width: auto;
 }
 
 .bookingsAnchor {
@@ -127,6 +131,10 @@
 
   .header-actions {
     flex: 1 1 100%;
+  }
+
+  .header-actions > button {
+    width: auto;
   }
 
   .mobileMenuToggle {

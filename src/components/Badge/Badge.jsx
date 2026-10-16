@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const Badge = ({ label, colorScheme = 'green' }) => {
   return (

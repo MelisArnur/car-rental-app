@@ -38,26 +38,28 @@ export const Cart = ({ isOpen, onClose }) => {
       ) : (
         <>
           <ul className={styles.cartItems}>
-            {cartItems.map((item, index) => {
+            {cartItems.map((item) => {
               const itemPrice = item.bookingPricePerDay ?? item.pricePerDay ?? item.price ?? 0;
+              const lineTotal = itemPrice * item.rentalDays * item.quantity;
               return (
-                <li className={styles.cartItem} key={item.cartItemId ?? `${item.id}-${itemPrice}-${index}`}>
+                <li className={styles.cartItem} key={item.cartItemId ?? `${item.id}-${itemPrice}`}>
                   <div className={styles.itemDetails}>
                     <strong>{item.title}</strong>
                     <span>${itemPrice.toFixed(2)} / day</span>
+                    <span>{item.rentalDays} rental day(s) per car</span>
                   </div>
                   <div className={styles.itemActions}>
                     <button
                       type="button"
-                      aria-label={`Decrease ${item.title} rental days`}
+                      aria-label={`Remove one ${item.title} from bookings`}
                       onClick={() => updateQuantity(item.cartItemId ?? item.id, item.quantity - 1)}
                     >
                       −
                     </button>
-                    <span>{item.quantity} day(s)</span>
+                    <span>{item.quantity} {item.quantity === 1 ? 'car' : 'cars'}</span>
                     <button
                       type="button"
-                      aria-label={`Increase ${item.title} rental days`}
+                      aria-label={`Add one ${item.title} to bookings`}
                       onClick={() => updateQuantity(item.cartItemId ?? item.id, item.quantity + 1)}
                     >
                       +
@@ -70,6 +72,7 @@ export const Cart = ({ isOpen, onClose }) => {
                       Remove
                     </button>
                   </div>
+                  <strong>${lineTotal.toFixed(2)}</strong>
                 </li>
               );
             })}

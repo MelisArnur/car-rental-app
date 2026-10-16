@@ -1,29 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { currentUser } from '../data/mockData';
 import { AuthContext } from './contexts';
 
+function readSavedUser() {
+  try {
+    const savedUser = localStorage.getItem('authUser');
+    const user = savedUser ? JSON.parse(savedUser) : null;
+    return user && typeof user.name === 'string' ? user : null;
+  } catch {
+    localStorage.removeItem('authUser');
+    return null;
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    let isActive = true;
-
-    try {
-      const savedUser = localStorage.getItem('authUser');
-      const parsedUser = savedUser ? JSON.parse(savedUser) : null;
-      if (parsedUser && typeof parsedUser.name === 'string') {
-        Promise.resolve(parsedUser).then((verifiedUser) => {
-          if (isActive) setUser(verifiedUser);
-        });
-      }
-    } catch {
-      localStorage.removeItem('authUser');
-    }
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
+  const [user, setUser] = useState(readSavedUser);
 
   const login = useCallback((profile = currentUser) => {
     localStorage.setItem('authUser', JSON.stringify(profile));

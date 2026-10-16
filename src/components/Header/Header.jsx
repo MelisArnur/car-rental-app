@@ -5,14 +5,16 @@ import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
 import { Cart } from '../Cart/Cart';
 import { useTheme, useAuth, useCart } from '../../context/useContexts';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css'; 
 
-export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
+export const Header = ({ navItems, isMobile }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const { isDarkMode, toggleTheme } = useTheme();
-    const { user, login, logout } = useAuth();
+    const { user, logout } = useAuth();
     const { favorites, totalCount, totalPrice } = useCart();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const closeMenuOnDesktop = () => {
@@ -26,11 +28,9 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
     return (
         <header className={styles.header}>
             <div className={styles['header-container']}>
-                <Logo 
-                    src="https://flaticon.com"
-                    altText="DriveSelect Logo"
-                    width={200}
-                />
+                <Link to="/" aria-label="DriveSelect home">
+                    <Logo altText="DriveSelect Logo" width={200} />
+                </Link>
 
                 {isMobile && (
                     <button
@@ -49,11 +49,7 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
                         {(!isMobile || isMenuOpen) && (
                         <Navigation
                             navItems={navItems}
-                            activeTab={activeTab}
-                            onSelectTab={(tab) => {
-                                onSelectTab(tab);
-                                setIsMenuOpen(false);
-                            }}
+                            onNavigate={() => setIsMenuOpen(false)}
                         />
                         )}
                     
@@ -68,7 +64,7 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
                                 aria-expanded={isCartOpen}
                                 onClick={() => setIsCartOpen(true)}
                             >
-                                Bookings: {totalCount} · ${totalPrice.toFixed(2)}
+                                Bookings: {totalCount} {totalCount === 1 ? 'car' : 'cars'} · ${totalPrice.toFixed(2)}
                             </button>
                             <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
                         </div>
@@ -79,7 +75,11 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
                             onClick={toggleTheme}
                         />
 
-                        <UserProfile user={user} onLogin={login} onLogout={logout} />
+                        <UserProfile
+                            user={user}
+                            onLogin={() => navigate('/login')}
+                            onLogout={logout}
+                        />
                     </div>
                     </div>
                 )}

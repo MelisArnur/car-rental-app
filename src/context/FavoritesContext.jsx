@@ -11,9 +11,20 @@ function readSavedArray(key) {
   }
 }
 
+function readSavedCart() {
+  return readSavedArray('cartItems').map((item) => {
+    const legacyDays = item.rentalDays ?? item.days ?? item.quantity ?? 1;
+    return {
+      ...item,
+      quantity: item.rentalDays === undefined ? 1 : Math.max(1, Number(item.quantity) || 1),
+      rentalDays: Math.max(1, Math.floor(Number(legacyDays)) || 1),
+    };
+  });
+}
+
 export function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState(() => readSavedArray('favorites'));
-  const [cartItems, setCartItems] = useState(() => readSavedArray('cartItems'));
+  const [cartItems, setCartItems] = useState(readSavedCart);
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
@@ -35,22 +46,25 @@ export function FavoritesProvider({ children }) {
   }, [favorites]);
 
   const addToCart = useCallback((item) => {
-    const quantity = Math.max(1, Math.floor(Number(item.quantity ?? item.days ?? 1)) || 1);
+    const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
+    const rentalDays = Math.max(1, Math.floor(Number(item.rentalDays ?? item.days ?? 1)) || 1);
     const bookingPricePerDay = Number(
       item.bookingPricePerDay ?? item.pricePerDay ?? item.price ?? 0
     );
     setCartItems((previous) => {
       const existingItem = previous.find((cartItem) =>
         cartItem.id === item.id &&
+        cartItem.rentalDays === rentalDays &&
         Number(cartItem.bookingPricePerDay ?? cartItem.pricePerDay ?? cartItem.price ?? 0) === bookingPricePerDay
       );
       if (existingItem) {
         return previous.map((cartItem) =>
           cartItem.id === item.id &&
+          cartItem.rentalDays === rentalDays &&
           Number(cartItem.bookingPricePerDay ?? cartItem.pricePerDay ?? cartItem.price ?? 0) === bookingPricePerDay
             ? {
               ...cartItem,
-              cartItemId: cartItem.cartItemId ?? `${item.id}:${bookingPricePerDay}`,
+              cartItemId: cartItem.cartItemId ?? `${item.id}:${bookingPricePerDay}:${rentalDays}`,
               quantity: cartItem.quantity + quantity,
             }
             : cartItem
@@ -58,9 +72,10 @@ export function FavoritesProvider({ children }) {
       }
       return [...previous, {
         ...item,
-        cartItemId: `${item.id}:${bookingPricePerDay}`,
+        cartItemId: `${item.id}:${bookingPricePerDay}:${rentalDays}`,
         bookingPricePerDay,
         quantity,
+        rentalDays,
       }];
     });
     setToastMessage('Booking added');
@@ -88,7 +103,11 @@ export function FavoritesProvider({ children }) {
   const clearToast = useCallback(() => setToastMessage(null), []);
   const totalCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cartItems.reduce(
-    (total, item) => total + (item.bookingPricePerDay ?? item.pricePerDay ?? item.price ?? 0) * item.quantity,
+    (total, item) => total + (
+      (item.bookingPricePerDay ?? item.pricePerDay ?? item.price ?? 0) *
+      item.rentalDays *
+      item.quantity
+    ),
     0
   );
   const contextValue = useMemo(

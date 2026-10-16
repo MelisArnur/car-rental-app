@@ -13,6 +13,7 @@
   cursor: pointer;
   padding: 8px 0;
   transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 .navLink:hover,

@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const RatingStars = ({ score, reviewsCount }) => {
   const stars = Array.from({ length: 5 }, (_, i) => i < Math.floor(score) ? '★' : '☆');

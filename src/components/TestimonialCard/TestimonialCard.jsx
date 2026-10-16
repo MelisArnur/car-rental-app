@@ -1,8 +1,6 @@
-import React from 'react';
 import styles from './TestimonialCard.module.css';
 
 export const TestimonialCard = (props) => {
-  // Поддерживаем передачу как через testimonial={review}, так и прямо пропсами
   const data = props.testimonial || props.review || props;
   
   const { authorName, authorRole, avatar, text, date } = data;

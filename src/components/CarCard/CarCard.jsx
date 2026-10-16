@@ -3,13 +3,14 @@ import { Badge } from '../Badge/Badge';
 import { RatingStars } from '../RatingStars/RatingStars';
 import { Button } from '../Button/Button';
 import { useCart } from '../../context/useContexts';
-import styles from './CarCard.module.css'; // 1. Импортируем стили модуля
+import { Link } from 'react-router-dom';
+import styles from './CarCard.module.css';
 
 export const CarCard = ({ car, onOpenQuickView }) => {
   const [days, setDays] = useState(1);
   const { favorites, toggleFavorite, cartItems } = useCart();
   const isFav = favorites.includes(car.id);
-  const bookedDays = cartItems.reduce(
+  const bookedCars = cartItems.reduce(
     (total, item) => total + (item.id === car.id ? item.quantity : 0),
     0
   );
@@ -63,15 +64,20 @@ export const CarCard = ({ car, onOpenQuickView }) => {
           <span className={styles.priceAmount}>${car.pricePerDay * days}</span>
           <small> (${car.pricePerDay}/day)</small>
         </div>
-        {bookedDays > 0 && <small>Already booked: {bookedDays} day(s)</small>}
+        {bookedCars > 0 && (
+          <small>In bookings: {bookedCars} {bookedCars === 1 ? 'car' : 'cars'}</small>
+        )}
       </div>
 
       <div className={styles.carCardFooter}>
+        <Link className="text-link car-details-link" to={`/cars/${car.id}`}>
+          View details
+        </Link>
         <Button 
-          text={!car.isAvailable ? "Currently Unavailable" : bookedDays > 0 ? "Book More" : "Book Now"}
+          text={!car.isAvailable ? "Currently Unavailable" : bookedCars > 0 ? "Book Another" : "Book Now"}
           variant="primary" 
           isDisabled={!car.isAvailable} 
-          onClick={() => car.isAvailable && onOpenQuickView(car, days)} 
+          onClick={() => car.isAvailable && onOpenQuickView(car, days)}
         />
       </div>
     </div>

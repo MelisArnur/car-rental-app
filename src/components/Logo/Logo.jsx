@@ -1,4 +1,3 @@
-import React from 'react';
 import logoFile from '../../assets/logo.svg'; 
 
 export const Logo = ({ altText, width = 250, height = 100 }) => {

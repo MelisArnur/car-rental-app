@@ -7,10 +7,9 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
   const [selectedColor, setSelectedColor] = useState(car?.colors?.[0] || '');
   const [promo, setPromo] = useState('');
   const [discount, setDiscount] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(600); // 10 минут в секундах
+  const [timeLeft, setTimeLeft] = useState(600); 
   const { addToCart } = useCart();
 
-  // 6. Таймер обратного отсчета для акции
   useEffect(() => {
     if (!car) return;
 
@@ -21,7 +20,6 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
     return () => clearInterval(interval);
   }, [car]);
 
-  // 11. Закрытие по Escape
   useEffect(() => {
     if (!car) return;
 
@@ -32,7 +30,7 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
     return () => document.removeEventListener('keydown', handleEsc);
   }, [car, onClose]);
 
-  // 8. Click outside (уже реализован через overlay в JSX, но добавим для соответствия ДЗ)
+
   useEffect(() => {
     if (!car) return;
 
@@ -114,9 +112,9 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
               e.preventDefault();
               addToCart({
                 ...car,
-                days,
+                rentalDays: days,
                 bookingPricePerDay: car.pricePerDay * (1 - discount),
-                quantity: days,
+                quantity: 1,
               });
               onClose();
             }}

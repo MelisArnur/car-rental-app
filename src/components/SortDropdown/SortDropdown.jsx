@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './SortDropdown.module.css';
 
 export const SortDropdown = ({ sortBy, setSortBy }) => {

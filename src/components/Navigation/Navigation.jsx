@@ -1,27 +1,28 @@
+import { Link, NavLink } from 'react-router-dom';
 import styles from './Navigation.module.css';
 
-export const Navigation = ({ navItems, activeTab, onSelectTab }) => {
+export const Navigation = ({ navItems, onNavigate }) => {
   return (
     <nav className={styles.nav}>
-      {navItems.map((item) => (
-        <button
+      {navItems.map((item) => item.to.includes('#') ? (
+        <Link
           key={item.id}
-          type="button"
-          className={`${styles.navLink} ${activeTab === item.id ? styles.active : ''}`}
-          aria-current={activeTab === item.id ? 'location' : undefined}
-          onClick={() => {
-            onSelectTab(item.id);
-            const targetId = item.link?.replace(/^#/, '');
-            if (targetId) {
-              document.getElementById(targetId)?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-              });
-            }
-          }}
+          className={styles.navLink}
+          to={item.to}
+          onClick={onNavigate}
         >
           {item.label}
-        </button>
+        </Link>
+      ) : (
+        <NavLink
+          key={item.id}
+          end={item.end}
+          className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          to={item.to}
+          onClick={onNavigate}
+        >
+          {item.label}
+        </NavLink>
       ))}
     </nav>
   );

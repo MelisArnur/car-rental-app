@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const Container = ({ children, maxWidth = '1200px' }) => {
   return (
