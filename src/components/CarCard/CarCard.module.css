@@ -22,10 +22,29 @@
 }
 
 .favBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   background: none;
-  border: none;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
   font-size: 1.2rem;
   cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.favBtn:hover {
+  background: var(--bg-primary);
+  border-color: #ef4444;
+  transform: scale(1.04);
+}
+
+.favBtn:focus-visible,
+.counterControls button:focus-visible {
+  outline: 3px solid rgba(21, 128, 61, 0.28);
+  outline-offset: 2px;
 }
 
 .carImage {
@@ -67,13 +86,21 @@
 }
 
 .counterControls button {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-card);
   color: var(--text-primary);
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.counterControls button:hover {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  color: #fff;
 }
 
 .priceTag {
@@ -90,4 +117,8 @@
 .carCardFooter {
   padding: 16px;
   border-top: 1px solid var(--border-color);
+}
+
+.carCardFooter button {
+  width: 100%;
 }

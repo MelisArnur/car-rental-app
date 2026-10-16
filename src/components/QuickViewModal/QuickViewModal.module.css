@@ -126,3 +126,9 @@
   color: var(--text-primary);
   font-size: 0.9rem;
 }
+
+.promoMessage {
+  margin-top: 6px;
+  color: var(--accent-color);
+  font-size: 0.85rem;
+}

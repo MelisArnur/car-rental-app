@@ -7,8 +7,22 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
   const [selectedColor, setSelectedColor] = useState(car?.colors?.[0] || '');
   const [promo, setPromo] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [promoMessage, setPromoMessage] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [timeLeft, setTimeLeft] = useState(600); // 10 минут в секундах
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    if (!car) return;
+    setSelectedColor(car.colors?.[0] || '');
+    setPromo('');
+    setDiscount(0);
+    setPromoMessage('');
+    setCustomerName('');
+    setCustomerPhone('');
+    setTimeLeft(600);
+  }, [car]);
 
   // 6. Таймер обратного отсчета для акции
   useEffect(() => {
@@ -57,7 +71,12 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
   const handleApplyPromo = () => {
     if (promo.trim().toUpperCase() === 'DRIVE10') {
       setDiscount(0.1);
+      setPromoMessage('10% discount applied.');
+      return;
     }
+
+    setDiscount(0);
+    setPromoMessage('That promo code is not valid.');
   };
 
   const totalPrice = car.pricePerDay * days * (1 - discount);
@@ -84,8 +103,10 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
                 {car.colors?.map((c) => (
                   <button
                     key={c}
+                    type="button"
                     className={selectedColor === c ? styles.colorChipSelected : styles.colorChip}
                     onClick={() => setSelectedColor(c)}
+                    aria-pressed={selectedColor === c}
                   >
                     {c}
                   </button>
@@ -95,14 +116,18 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
           </div>
 
           <div className={styles.promoGroup}>
-            <input 
+            <input
               type="text" 
               placeholder="Promo code (DRIVE10)" 
               value={promo} 
-              onChange={(e) => setPromo(e.target.value)} 
+              onChange={(e) => {
+                setPromo(e.target.value);
+                setPromoMessage('');
+              }}
             />
             <Button text="Apply" variant="outline" onClick={handleApplyPromo} />
           </div>
+          {promoMessage && <p className={styles.promoMessage} role="status">{promoMessage}</p>}
 
           <div className={styles.totalPriceBox}>
             Total: <strong>${totalPrice.toFixed(2)}</strong>
@@ -115,15 +140,32 @@ export const QuickViewModal = ({ car, days = 1, onClose }) => {
               addToCart({
                 ...car,
                 days,
+                selectedColor,
+                customerName: customerName.trim(),
+                customerPhone: customerPhone.trim(),
                 bookingPricePerDay: car.pricePerDay * (1 - discount),
                 quantity: days,
               });
               onClose();
             }}
           >
-            <input type="text" placeholder="Full Name" required />
-            <input type="tel" placeholder="Phone Number" required />
-            <Button text="Confirm Booking" variant="primary" />
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
+              autoComplete="name"
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={customerPhone}
+              onChange={(event) => setCustomerPhone(event.target.value)}
+              autoComplete="tel"
+              required
+            />
+            <Button type="submit" text="Confirm Booking" variant="primary" />
           </form>
         </div>
       </div>

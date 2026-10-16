@@ -1,22 +1,25 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from "../Logo/Logo";
 import { Navigation } from '../Navigation/Navigation';
 import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
-import { Cart } from '../Cart/Cart';
 import { useTheme, useAuth, useCart } from '../../context/useContexts';
 import styles from './Header.module.css'; 
 
-export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
+export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const { isDarkMode, toggleTheme } = useTheme();
-    const { user, login, logout } = useAuth();
+    const { user, logout } = useAuth();
     const { favorites, totalCount, totalPrice } = useCart();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const closeMenuOnDesktop = () => {
-            if (window.innerWidth >= 768) setIsMenuOpen(false);
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            if (!mobile) setIsMenuOpen(false);
         };
 
         window.addEventListener('resize', closeMenuOnDesktop);
@@ -26,11 +29,9 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
     return (
         <header className={styles.header}>
             <div className={styles['header-container']}>
-                <Logo 
-                    src="https://flaticon.com"
-                    altText="DriveSelect Logo"
-                    width={200}
-                />
+                <Link to="/" aria-label="DriveSelect home">
+                    <Logo altText="DriveSelect Logo" width={200} />
+                </Link>
 
                 {isMobile && (
                     <button
@@ -48,30 +49,17 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
                     <div className={`${styles['header-right-side']} ${isMobile ? styles.mobileMenuPanel : ''}`}>
                         {(!isMobile || isMenuOpen) && (
                         <Navigation
-                            navItems={navItems}
-                            activeTab={activeTab}
-                            onSelectTab={(tab) => {
-                                onSelectTab(tab);
-                                setIsMenuOpen(false);
-                            }}
+                            onNavigate={() => setIsMenuOpen(false)}
                         />
                         )}
                     
                     <div className={styles['header-actions']}>
-                        <div className={styles['favorites-indicator']} title="Favorite Cars">
+                        <Link className={styles['favorites-indicator']} to="/favorites" title="Favorite cars">
                            ❤️ <span className={styles['fav-badge']}>{favorites.length}</span>
-                        </div>
-                        <div className={styles.bookingsAnchor}>
-                            <button
-                                className={styles.bookingsButton}
-                                type="button"
-                                aria-expanded={isCartOpen}
-                                onClick={() => setIsCartOpen(true)}
-                            >
-                                Bookings: {totalCount} · ${totalPrice.toFixed(2)}
-                            </button>
-                            <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-                        </div>
+                        </Link>
+                        <button className={styles.bookingsButton} type="button" onClick={() => navigate('/bookings')}>
+                            Bookings: {totalCount} · ${totalPrice.toFixed(2)}
+                        </button>
 
                         <Button 
                             text={isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
@@ -79,7 +67,7 @@ export const Header = ({ navItems, activeTab, onSelectTab, isMobile }) => {
                             onClick={toggleTheme}
                         />
 
-                        <UserProfile user={user} onLogin={login} onLogout={logout} />
+                        <UserProfile user={user} onLogin={() => navigate('/login')} onLogout={logout} />
                     </div>
                     </div>
                 )}

@@ -1,27 +1,25 @@
+import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.css';
 
-export const Navigation = ({ navItems, activeTab, onSelectTab }) => {
+const navItems = [
+  { label: 'Home', to: '/', end: true },
+  { label: 'Fleet Catalog', to: '/catalog' },
+  { label: 'About', to: '/about' },
+];
+
+export const Navigation = ({ onNavigate }) => {
   return (
     <nav className={styles.nav}>
-      {navItems.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          className={`${styles.navLink} ${activeTab === item.id ? styles.active : ''}`}
-          aria-current={activeTab === item.id ? 'location' : undefined}
-          onClick={() => {
-            onSelectTab(item.id);
-            const targetId = item.link?.replace(/^#/, '');
-            if (targetId) {
-              document.getElementById(targetId)?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-              });
-            }
-          }}
+      {navItems.map(({ label, to, end }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={end}
+          className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          onClick={onNavigate}
         >
-          {item.label}
-        </button>
+          {label}
+        </NavLink>
       ))}
     </nav>
   );
