@@ -88,10 +88,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
+  min-height: 40px;
+  padding: 0 16px;
   border: 1px solid var(--accent-color);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--accent-color);
   color: #fff;
   font: inherit;
@@ -99,16 +99,6 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-}
-
-.page-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-.page-button:hover:not(:disabled) {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
 }
 
 .page-button:focus-visible,
@@ -136,9 +126,7 @@
 }
 
 .page-text-button {
-  padding: 0;
-  border: 0;
-  background: transparent;
+  color: #fff;
 }
 
 .page-car-grid {
@@ -212,6 +200,20 @@
 
 .page-form h1 {
   margin-top: 0;
+}
+
+.login-prompt {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 600px;
+  margin: -30px auto 48px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.login-register-button {
+  width: 100%;
 }
 
 .checkout-layout {

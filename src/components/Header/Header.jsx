@@ -5,7 +5,6 @@ import { Navigation } from '../Navigation/Navigation';
 import { UserProfile } from '../UserProfile/UserProfile';
 import { Button } from '../Button/Button';
 import { useTheme, useAuth, useCart } from '../../context/useContexts';
-import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css'; 
 
 export const Header = () => {

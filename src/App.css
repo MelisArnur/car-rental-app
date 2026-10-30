@@ -57,6 +57,12 @@ body {
   scroll-margin-top: 100px;
 }
 
+.featured-catalog-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
 .stats-grid,
 .reviews-grid {
   display: grid;

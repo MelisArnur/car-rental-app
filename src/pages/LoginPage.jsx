@@ -49,6 +49,9 @@ export function LoginPage() {
           {error && <p className="form-error" role="alert">{error}</p>}
           <button className="primary-action" type="submit">Continue</button>
         </form>
+        <p className="page-intro">
+          New to DriveSelect? <Link className="text-link" to="/register">Create an account</Link>
+        </p>
         <Link className="text-link" to="/">Back to fleet</Link>
       </section>
     </Container>

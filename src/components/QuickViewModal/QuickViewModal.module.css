@@ -32,11 +32,9 @@
 }
 
 .modalClose {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: var(--text-secondary);
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
 }
 
 .modalBody {
@@ -63,23 +61,15 @@
 }
 
 .colorChip {
-  padding: 4px 10px;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+  min-height: 40px;
+  padding: 0 12px;
 }
 
 .colorChipSelected {
-  padding: 4px 10px;
-  border: 1px solid var(--accent-color);
-  background-color: var(--accent-color);
-  color: #ffffff;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+  min-height: 40px;
+  padding: 0 12px;
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .optionsGroup {

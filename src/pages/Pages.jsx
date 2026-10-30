@@ -170,7 +170,7 @@ export function FavoritesPage() {
           ))}
         </div>
       ) : (
-        <div className="empty-state"><p>Your favorites list is empty.</p><Link to="/catalog">Browse the fleet</Link></div>
+        <div className="empty-state"><p>Your favorites list is empty.</p><Link className="page-button" to="/catalog">Browse the fleet</Link></div>
       )}
     </Container></main>
   );
@@ -203,6 +203,10 @@ export function LoginPage() {
         <input id="login-name" value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" />
         <button className="page-button" type="submit">Continue</button>
       </form>
+      <div className="login-prompt">
+        <p>New to DriveSelect?</p>
+        <Link className="page-button login-register-button" to="/register">Create an account</Link>
+      </div>
     </Container></main>
   );
 }

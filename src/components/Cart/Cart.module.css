@@ -37,12 +37,8 @@
 .cartHeader button,
 .itemActions button,
 .cartFooter button {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 6px 9px;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  cursor: pointer;
+  min-height: 36px;
+  padding: 0 12px;
 }
 
 .cartItems {
@@ -78,7 +74,7 @@
 
 .itemActions .removeButton,
 .cartFooter button {
-  color: #b91c1c;
+  color: #fff;
 }
 
 .cartFooter {

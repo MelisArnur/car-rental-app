@@ -39,7 +39,7 @@
   border-radius: 20px;
   cursor: pointer;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.2s ease;
 }
 
@@ -88,9 +88,9 @@
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--bg-card);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1;
   text-decoration: none;
@@ -139,20 +139,9 @@
 
 .mobileMenuToggle {
   display: none;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-primary);
   font-size: 20px;
   line-height: 1;
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease;
-}
-
-.mobileMenuToggle:hover {
-  border-color: var(--accent-color);
-  background-color: var(--bg-primary);
+  padding: 0 10px;
 }
 
 @media (max-width: 767px) {

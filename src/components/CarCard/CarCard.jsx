@@ -4,7 +4,6 @@ import { Badge } from '../Badge/Badge';
 import { RatingStars } from '../RatingStars/RatingStars';
 import { Button } from '../Button/Button';
 import { useCart } from '../../context/useContexts';
-import { Link } from 'react-router-dom';
 import styles from './CarCard.module.css';
 
 export const CarCard = ({ car, onOpenQuickView }) => {
@@ -71,7 +70,7 @@ export const CarCard = ({ car, onOpenQuickView }) => {
       </div>
 
       <div className={styles.carCardFooter}>
-        <Link className="text-link car-details-link" to={`/cars/${car.id}`}>
+        <Link className={styles.detailsLink} to={`/cars/${car.id}`}>
           View details
         </Link>
         <Button 

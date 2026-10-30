@@ -9,6 +9,7 @@ import { QuickViewModal } from './components/QuickViewModal/QuickViewModal';
 import { Container } from './components/Container/Container';
 import { MainLayout } from './components/MainLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { RegisterForm } from './components/RegisterForm';
 import {
   AboutPage,
   BookingConfirmedPage,
@@ -68,7 +69,7 @@ function HomePage() {
             ))}
           </div>
           <div className="featured-catalog-link">
-            <Link to="/catalog">View All Vehicles →</Link>
+            <Link className="page-button" to="/catalog">View All Vehicles →</Link>
           </div>
         </section>
 
@@ -112,31 +113,11 @@ export default function App() {
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterForm />} />
         <Route element={<ProtectedRoute />}>
           <Route path="bookings" element={<BookingsPage />} />
           <Route path="booking-confirmed" element={<BookingConfirmedPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
-  );
-}
-
-export default function App() {
-  return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route index element={<CatalogPage />} />
-        <Route path="cars/:id" element={<CarDetailsPage />} />
-        <Route
-          path="bookings"
-          element={(
-            <ProtectedRoute>
-              <BookingsPage />
-            </ProtectedRoute>
-          )}
-        />
-        <Route path="login" element={<LoginPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
